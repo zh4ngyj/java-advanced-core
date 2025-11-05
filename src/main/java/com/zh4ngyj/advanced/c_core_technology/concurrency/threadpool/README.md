@@ -80,3 +80,6 @@ flowchart TB
 - **TERMINATED**: `terminated()` 方法执行完毕。
 
 本包中的示例 (`ThreadPoolExecutorDemo.java`) 展示了如何手动创建线程池并观察其工作行为。
+
+## 参考资料
+> https://tech.meituan.com/2020/04/02/java-pooling-pratice-in-meituan.html
