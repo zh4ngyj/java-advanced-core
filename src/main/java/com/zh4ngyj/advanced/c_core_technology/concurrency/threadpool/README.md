@@ -93,5 +93,33 @@ flowchart LR
 
 本包中的示例 (`ThreadPoolExecutorDemo.java`) 展示了如何手动创建线程池并观察其工作行为。
 
+## 任务调度流程
+
+1. 首先检测线程池运行状态，如果不是RUNNING，则直接拒绝，线程池要保证在RUNNING的状态下执行任务。
+2. 如果workerCount < corePoolSize，则创建并启动一个线程来执行新提交的任务。
+3. 如果workerCount >= corePoolSize，且线程池内的阻塞队列未满，则将任务添加到该阻塞队列中。
+4. 如果workerCount >= corePoolSize && workerCount < maximumPoolSize，且线程池内的阻塞队列已满，则创建并启动一个线程来执行新提交的任务。
+5. 如果workerCount >= maximumPoolSize，并且线程池内的阻塞队列已满, 则根据拒绝策略来处理该任务, 默认的处理方式是直接抛异常。
+
+~~~mermaid
+flowchart TB
+    A[开始] --> B[提交任务]
+    B --> C{线程池是否还在运行}
+    C --> |是| D{工作线程数>核心数?}
+    D --> |否| E{阻塞队列是否已满}
+    E --> |是| F{工作线程数<最大线程数}
+
+    C --> |否| G[任务拒绝]
+    D --> |是| H[添加工作线程并执行] 
+    E --> |否| I[添加任务到阻塞队列]
+    F --> |是| J[添加工作线程并执行]
+    F --> |否| G
+
+    H --> Z[结束]
+    I --> Z
+    J --> Z
+    G --> Z
+~~~
+
 ## 参考资料
 > https://tech.meituan.com/2020/04/02/java-pooling-pratice-in-meituan.html
